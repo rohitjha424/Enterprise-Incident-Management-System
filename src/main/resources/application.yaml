@@ -1,3 +1,15 @@
 spring:
-  application:
-    name: com.rohit.incident.management
+  datasource:
+    url: jdbc:mysql://localhost:3306/incident_db
+    username: root
+    password: yourpassword
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
