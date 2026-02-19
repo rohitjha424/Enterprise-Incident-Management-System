@@ -3,14 +3,24 @@ package com.enterprise.incident.incident_management.dto;
 
 import com.enterprise.incident.incident_management.entity.IncidentPriority;
 import com.enterprise.incident.incident_management.entity.IncidentStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class IncidentRequestDTO {
 
-    private String title;
-    private String description;
-    private IncidentStatus status;
-    private IncidentPriority priority;
+	@NotBlank(message = "Title is required")
+	@Size(max = 100, message = "Title cannot exceed 100 characters")
+	private String title;
 
+	@NotBlank(message = "Description is required")
+	private String description;
+
+	@NotNull(message = "Status is required")
+	private IncidentStatus status;
+
+	@NotNull(message = "Priority is required")
+	private IncidentPriority priority;
     // Getters & Setters
 
     public String getTitle() { return title; }
