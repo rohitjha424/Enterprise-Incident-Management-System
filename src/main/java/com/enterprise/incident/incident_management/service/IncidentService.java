@@ -37,4 +37,18 @@ public class IncidentService {
     public void deleteIncident(Long id) {
         incidentRepository.deleteById(id);
     }
+    
+    public Incident updateIncident(Long id, Incident updatedIncident) {
+
+        return incidentRepository.findById(id)
+                .map(existing -> {
+                    existing.setTitle(updatedIncident.getTitle());
+                    existing.setDescription(updatedIncident.getDescription());
+                    existing.setStatus(updatedIncident.getStatus());
+                    existing.setPriority(updatedIncident.getPriority());
+                    return incidentRepository.save(existing);
+                })
+                .orElseThrow(() -> new RuntimeException("Incident not found with id " + id));
+    }
+
 }

@@ -45,4 +45,15 @@ public class IncidentController {
         incidentService.deleteIncident(id);
         return ResponseEntity.noContent().build();
     }
+    
+ // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<Incident> updateIncident(
+            @PathVariable Long id,
+            @RequestBody Incident incident) {
+
+        Incident updated = incidentService.updateIncident(id, incident);
+        return ResponseEntity.ok(updated);
+    }
+
 }
