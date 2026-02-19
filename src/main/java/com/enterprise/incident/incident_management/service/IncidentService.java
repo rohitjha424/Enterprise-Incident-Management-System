@@ -6,6 +6,9 @@ import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.entity.Incident;
 import com.enterprise.incident.incident_management.exception.ResourceNotFoundException;
 import com.enterprise.incident.incident_management.repository.IncidentRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,12 +38,10 @@ public class IncidentService {
     }
 
     // GET ALL
-    public List<IncidentResponseDTO> getAllIncidents() {
+    public Page<IncidentResponseDTO> getAllIncidents(Pageable pageable) {
 
-        return incidentRepository.findAll()
-                .stream()
-                .map(this::mapToResponseDTO)
-                .toList();
+        return incidentRepository.findAll(pageable)
+                .map(this::mapToResponseDTO);
     }
 
     // GET BY ID

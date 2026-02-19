@@ -2,6 +2,9 @@ package com.enterprise.incident.incident_management.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +37,12 @@ public class IncidentController {
 
     // GET ALL
     @GetMapping
-    public ResponseEntity<List<IncidentResponseDTO>> getAllIncidents() {
-        return ResponseEntity.ok(incidentService.getAllIncidents());
+    public ResponseEntity<Page<IncidentResponseDTO>> getAllIncidents(
+            @PageableDefault(size = 5, sort = "createdAt") Pageable pageable) {
+
+        return ResponseEntity.ok(
+                incidentService.getAllIncidents(pageable)
+        );
     }
 
     // GET BY ID
