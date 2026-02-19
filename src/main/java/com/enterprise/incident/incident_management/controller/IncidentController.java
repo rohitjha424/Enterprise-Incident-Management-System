@@ -27,8 +27,7 @@ public class IncidentController {
 
         return new ResponseEntity<>(
                 incidentService.createIncident(dto),
-                HttpStatus.CREATED
-        );
+                HttpStatus.CREATED);
     }
 
     // GET ALL
@@ -50,8 +49,7 @@ public class IncidentController {
             @RequestBody IncidentRequestDTO dto) {
 
         return ResponseEntity.ok(
-                incidentService.updateIncident(id, dto)
-        );
+                incidentService.updateIncident(id, dto));
     }
 
     // DELETE
@@ -61,4 +59,3 @@ public class IncidentController {
         return ResponseEntity.noContent().build();
     }
 }
-
