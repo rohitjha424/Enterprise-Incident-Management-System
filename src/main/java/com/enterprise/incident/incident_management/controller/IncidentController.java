@@ -1,9 +1,8 @@
 package com.enterprise.incident.incident_management.controller;
 
-
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.enterprise.incident.incident_management.entity.Incident;
@@ -21,26 +20,29 @@ public class IncidentController {
 
     // CREATE
     @PostMapping
-    public Incident createIncident(@RequestBody Incident incident) {
-        return incidentService.createIncident(incident);
+    public ResponseEntity<Incident> createIncident(@RequestBody Incident incident) {
+        Incident saved = incidentService.createIncident(incident);
+        return ResponseEntity.ok(saved);
     }
 
     // GET ALL
     @GetMapping
-    public List<Incident> getAllIncidents() {
-        return incidentService.getAllIncidents();
+    public ResponseEntity<List<Incident>> getAllIncidents() {
+        return ResponseEntity.ok(incidentService.getAllIncidents());
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    public Optional<Incident> getIncidentById(@PathVariable Long id) {
-        return incidentService.getIncidentById(id);
+    public ResponseEntity<Incident> getIncidentById(@PathVariable Long id) {
+        return incidentService.getIncidentById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public String deleteIncident(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteIncident(@PathVariable Long id) {
         incidentService.deleteIncident(id);
-        return "Incident deleted successfully";
+        return ResponseEntity.noContent().build();
     }
 }
