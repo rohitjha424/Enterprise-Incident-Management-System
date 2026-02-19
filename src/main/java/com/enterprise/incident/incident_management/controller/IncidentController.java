@@ -2,10 +2,12 @@ package com.enterprise.incident.incident_management.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.enterprise.incident.incident_management.entity.Incident;
+import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
+import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.service.IncidentService;
 
 @RestController
@@ -20,24 +22,37 @@ public class IncidentController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<Incident> createIncident(@RequestBody Incident incident) {
-        Incident saved = incidentService.createIncident(incident);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<IncidentResponseDTO> createIncident(
+            @RequestBody IncidentRequestDTO dto) {
+
+        return new ResponseEntity<>(
+                incidentService.createIncident(dto),
+                HttpStatus.CREATED
+        );
     }
 
     // GET ALL
     @GetMapping
-    public ResponseEntity<List<Incident>> getAllIncidents() {
+    public ResponseEntity<List<IncidentResponseDTO>> getAllIncidents() {
         return ResponseEntity.ok(incidentService.getAllIncidents());
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<Incident> getIncidentById(@PathVariable Long id) {
-        Incident incident = incidentService.getIncidentById(id);
-        return ResponseEntity.ok(incident);
+    public ResponseEntity<IncidentResponseDTO> getIncidentById(@PathVariable Long id) {
+        return ResponseEntity.ok(incidentService.getIncidentById(id));
     }
 
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<IncidentResponseDTO> updateIncident(
+            @PathVariable Long id,
+            @RequestBody IncidentRequestDTO dto) {
+
+        return ResponseEntity.ok(
+                incidentService.updateIncident(id, dto)
+        );
+    }
 
     // DELETE
     @DeleteMapping("/{id}")
@@ -45,15 +60,5 @@ public class IncidentController {
         incidentService.deleteIncident(id);
         return ResponseEntity.noContent().build();
     }
-    
- // UPDATE
-    @PutMapping("/{id}")
-    public ResponseEntity<Incident> updateIncident(
-            @PathVariable Long id,
-            @RequestBody Incident incident) {
-
-        Incident updated = incidentService.updateIncident(id, incident);
-        return ResponseEntity.ok(updated);
-    }
-
 }
+

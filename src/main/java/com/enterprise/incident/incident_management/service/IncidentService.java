@@ -1,8 +1,9 @@
 package com.enterprise.incident.incident_management.service;
 
 
+import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
+import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.entity.Incident;
-import com.enterprise.incident.incident_management.entity.IncidentStatus;
 import com.enterprise.incident.incident_management.exception.ResourceNotFoundException;
 import com.enterprise.incident.incident_management.repository.IncidentRepository;
 import org.springframework.stereotype.Service;
@@ -19,44 +20,81 @@ public class IncidentService {
         this.incidentRepository = incidentRepository;
     }
 
-    public Incident createIncident(Incident incident) {
-        return incidentRepository.save(incident);
+    // CREATE
+    public IncidentResponseDTO createIncident(IncidentRequestDTO dto) {
+
+        Incident incident = new Incident();
+        incident.setTitle(dto.getTitle());
+        incident.setDescription(dto.getDescription());
+        incident.setStatus(dto.getStatus());
+        incident.setPriority(dto.getPriority());
+
+        Incident saved = incidentRepository.save(incident);
+
+        return mapToResponseDTO(saved);
     }
 
-    public List<Incident> getAllIncidents() {
-        return incidentRepository.findAll();
+    // GET ALL
+    public List<IncidentResponseDTO> getAllIncidents() {
+
+        return incidentRepository.findAll()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
     }
 
-    public Incident getIncidentById(Long id) {
-        return incidentRepository.findById(id)
+    // GET BY ID
+    public IncidentResponseDTO getIncidentById(Long id) {
+
+        Incident incident = incidentRepository.findById(id)
                 .orElseThrow(() ->
-                    new ResourceNotFoundException("Incident not found with id: " + id)
+                        new ResourceNotFoundException("Incident not found with id: " + id)
                 );
+
+        return mapToResponseDTO(incident);
     }
 
+    // UPDATE
+    public IncidentResponseDTO updateIncident(Long id, IncidentRequestDTO dto) {
 
-    public List<Incident> getIncidentsByStatus(IncidentStatus status) {
-        return incidentRepository.findByStatus(status);
+        Incident existing = incidentRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Incident not found with id: " + id)
+                );
+
+        existing.setTitle(dto.getTitle());
+        existing.setDescription(dto.getDescription());
+        existing.setStatus(dto.getStatus());
+        existing.setPriority(dto.getPriority());
+
+        Incident updated = incidentRepository.save(existing);
+
+        return mapToResponseDTO(updated);
     }
 
+    // DELETE
     public void deleteIncident(Long id) {
+
+        if (!incidentRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Incident not found with id: " + id);
+        }
+
         incidentRepository.deleteById(id);
     }
-    
-    public Incident updateIncident(Long id, Incident updatedIncident) {
 
-        return incidentRepository.findById(id)
-                .map(existing -> {
-                    existing.setTitle(updatedIncident.getTitle());
-                    existing.setDescription(updatedIncident.getDescription());
-                    existing.setStatus(updatedIncident.getStatus());
-                    existing.setPriority(updatedIncident.getPriority());
-                    return incidentRepository.save(existing);
-                })
-                .orElseThrow(() -> 
-                    new ResourceNotFoundException("Incident not found with id: " + id)
-                );
+    // MAPPER
+    private IncidentResponseDTO mapToResponseDTO(Incident incident) {
+
+        IncidentResponseDTO dto = new IncidentResponseDTO();
+
+        dto.setId(incident.getId());
+        dto.setTitle(incident.getTitle());
+        dto.setDescription(incident.getDescription());
+        dto.setStatus(incident.getStatus());
+        dto.setPriority(incident.getPriority());
+        dto.setCreatedAt(incident.getCreatedAt());
+
+        return dto;
     }
-
-
 }
+
