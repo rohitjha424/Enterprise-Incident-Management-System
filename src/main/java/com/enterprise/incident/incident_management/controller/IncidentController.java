@@ -10,6 +10,8 @@ import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
 import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.service.IncidentService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/incidents")
 public class IncidentController {
@@ -23,7 +25,7 @@ public class IncidentController {
     // CREATE
     @PostMapping
     public ResponseEntity<IncidentResponseDTO> createIncident(
-            @RequestBody IncidentRequestDTO dto) {
+            @Valid @RequestBody IncidentRequestDTO dto) {
 
         return new ResponseEntity<>(
                 incidentService.createIncident(dto),
@@ -46,7 +48,7 @@ public class IncidentController {
     @PutMapping("/{id}")
     public ResponseEntity<IncidentResponseDTO> updateIncident(
             @PathVariable Long id,
-            @RequestBody IncidentRequestDTO dto) {
+            @Valid @RequestBody IncidentRequestDTO dto) {
 
         return ResponseEntity.ok(
                 incidentService.updateIncident(id, dto));
