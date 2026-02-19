@@ -3,6 +3,7 @@ package com.enterprise.incident.incident_management.service;
 
 import com.enterprise.incident.incident_management.entity.Incident;
 import com.enterprise.incident.incident_management.entity.IncidentStatus;
+import com.enterprise.incident.incident_management.exception.ResourceNotFoundException;
 import com.enterprise.incident.incident_management.repository.IncidentRepository;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,13 @@ public class IncidentService {
         return incidentRepository.findAll();
     }
 
-    public Optional<Incident> getIncidentById(Long id) {
-        return incidentRepository.findById(id);
+    public Incident getIncidentById(Long id) {
+        return incidentRepository.findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException("Incident not found with id: " + id)
+                );
     }
+
 
     public List<Incident> getIncidentsByStatus(IncidentStatus status) {
         return incidentRepository.findByStatus(status);
@@ -48,7 +53,10 @@ public class IncidentService {
                     existing.setPriority(updatedIncident.getPriority());
                     return incidentRepository.save(existing);
                 })
-                .orElseThrow(() -> new RuntimeException("Incident not found with id " + id));
+                .orElseThrow(() -> 
+                    new ResourceNotFoundException("Incident not found with id: " + id)
+                );
     }
+
 
 }

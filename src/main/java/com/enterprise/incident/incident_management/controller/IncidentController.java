@@ -34,10 +34,10 @@ public class IncidentController {
     // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<Incident> getIncidentById(@PathVariable Long id) {
-        return incidentService.getIncidentById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Incident incident = incidentService.getIncidentById(id);
+        return ResponseEntity.ok(incident);
     }
+
 
     // DELETE
     @DeleteMapping("/{id}")
