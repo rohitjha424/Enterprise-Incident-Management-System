@@ -4,9 +4,12 @@ package com.enterprise.incident.incident_management.service;
 import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
 import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.entity.Incident;
+import com.enterprise.incident.incident_management.entity.IncidentPriority;
+import com.enterprise.incident.incident_management.entity.IncidentStatus;
 import com.enterprise.incident.incident_management.exception.ResourceNotFoundException;
 import com.enterprise.incident.incident_management.repository.IncidentRepository;
-
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,11 +41,31 @@ public class IncidentService {
     }
 
     // GET ALL
-    public Page<IncidentResponseDTO> getAllIncidents(Pageable pageable) {
+    public Page<IncidentResponseDTO> getAllIncidents(
+        IncidentStatus status,
+        IncidentPriority priority,
+        Pageable pageable) {
 
-        return incidentRepository.findAll(pageable)
-                .map(this::mapToResponseDTO);
-    }
+    Specification<Incident> spec = (root, query, cb) -> {
+
+        Predicate predicate = cb.conjunction();
+
+        if (status != null) {
+            predicate = cb.and(predicate,
+                    cb.equal(root.get("status"), status));
+        }
+
+        if (priority != null) {
+            predicate = cb.and(predicate,
+                    cb.equal(root.get("priority"), priority));
+        }
+
+        return predicate;
+    };
+
+    return incidentRepository.findAll(spec, pageable)
+            .map(this::mapToResponseDTO);
+}
 
     // GET BY ID
     public IncidentResponseDTO getIncidentById(Long id) {
