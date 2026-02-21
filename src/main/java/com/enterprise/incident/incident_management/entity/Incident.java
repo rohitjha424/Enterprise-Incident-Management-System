@@ -26,11 +26,11 @@ public class Incident {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "reported_by")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reported_by", nullable = false)
     private User reportedBy;
 
-    @OneToMany(mappedBy = "incident", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "incident", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     // Getters & Setters

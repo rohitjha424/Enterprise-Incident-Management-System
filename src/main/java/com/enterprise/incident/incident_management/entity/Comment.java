@@ -16,12 +16,12 @@ public class Comment {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "incident_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "incident_id", nullable = false)
     private Incident incident;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // Getters & Setters
