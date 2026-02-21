@@ -13,12 +13,9 @@ import java.util.List;
 public interface IncidentRepository extends JpaRepository<Incident, Long>, JpaSpecificationExecutor<Incident> {
 
     List<Incident> findByStatus(IncidentStatus status);
+
     Page<Incident> findByStatusAndPriority(
             IncidentStatus status,
             IncidentPriority priority,
-            Pageable pageable
-    );
+            Pageable pageable);
 }
-
-
-

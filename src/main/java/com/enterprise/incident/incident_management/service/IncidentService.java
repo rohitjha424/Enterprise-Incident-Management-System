@@ -1,6 +1,5 @@
 package com.enterprise.incident.incident_management.service;
 
-
 import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
 import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.entity.Incident;
@@ -42,38 +41,36 @@ public class IncidentService {
 
     // GET ALL
     public Page<IncidentResponseDTO> getAllIncidents(
-        IncidentStatus status,
-        IncidentPriority priority,
-        Pageable pageable) {
+            IncidentStatus status,
+            IncidentPriority priority,
+            Pageable pageable) {
 
-    Specification<Incident> spec = (root, query, cb) -> {
+        Specification<Incident> spec = (root, query, cb) -> {
 
-        Predicate predicate = cb.conjunction();
+            Predicate predicate = cb.conjunction();
 
-        if (status != null) {
-            predicate = cb.and(predicate,
-                    cb.equal(root.get("status"), status));
-        }
+            if (status != null) {
+                predicate = cb.and(predicate,
+                        cb.equal(root.get("status"), status));
+            }
 
-        if (priority != null) {
-            predicate = cb.and(predicate,
-                    cb.equal(root.get("priority"), priority));
-        }
+            if (priority != null) {
+                predicate = cb.and(predicate,
+                        cb.equal(root.get("priority"), priority));
+            }
 
-        return predicate;
-    };
+            return predicate;
+        };
 
-    return incidentRepository.findAll(spec, pageable)
-            .map(this::mapToResponseDTO);
-}
+        return incidentRepository.findAll(spec, pageable)
+                .map(this::mapToResponseDTO);
+    }
 
     // GET BY ID
     public IncidentResponseDTO getIncidentById(Long id) {
 
         Incident incident = incidentRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Incident not found with id: " + id)
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Incident not found with id: " + id));
 
         return mapToResponseDTO(incident);
     }
@@ -82,9 +79,7 @@ public class IncidentService {
     public IncidentResponseDTO updateIncident(Long id, IncidentRequestDTO dto) {
 
         Incident existing = incidentRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Incident not found with id: " + id)
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Incident not found with id: " + id));
 
         existing.setTitle(dto.getTitle());
         existing.setDescription(dto.getDescription());
@@ -121,4 +116,3 @@ public class IncidentService {
         return dto;
     }
 }
-

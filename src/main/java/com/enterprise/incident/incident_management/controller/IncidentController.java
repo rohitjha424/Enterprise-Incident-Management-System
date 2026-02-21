@@ -46,8 +46,7 @@ public class IncidentController {
             @PageableDefault(size = 5, sort = "createdAt") Pageable pageable) {
 
         return ResponseEntity.ok(
-                incidentService.getAllIncidents(status, priority, pageable)
-        );
+                incidentService.getAllIncidents(status, priority, pageable));
     }
 
     // GET BY ID
