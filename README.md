@@ -10,7 +10,9 @@
 
 **inside project folder:**
 
+docker ps 
 
+or
 
 **docker-compose up -d**
 
@@ -27,10 +29,4 @@
 5️⃣ Copy security password
 
 6️⃣ Start testing controllers in Postman
-
-
-
-
-
-
 
