@@ -36,6 +36,7 @@ public class SecurityConfig {
             throws Exception {
 
         http
+            .cors(cors -> {})   // 👈 add this line
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
@@ -48,6 +49,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+    
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
