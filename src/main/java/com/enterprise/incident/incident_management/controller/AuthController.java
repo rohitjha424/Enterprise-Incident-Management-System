@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import com.enterprise.incident.incident_management.dto.AuthRequest;
 import com.enterprise.incident.incident_management.security.JwtUtil;
 
-
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
