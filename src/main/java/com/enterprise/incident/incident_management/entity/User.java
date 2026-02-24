@@ -1,7 +1,9 @@
 package com.enterprise.incident.incident_management.entity;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -25,27 +27,49 @@ public class User {
 
     // Getters & Setters
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-    public List<Incident> getReportedIncidents() { return reportedIncidents; }
+    public List<Incident> getReportedIncidents() {
+        return reportedIncidents;
+    }
 
     public void setReportedIncidents(List<Incident> reportedIncidents) {
         this.reportedIncidents = reportedIncidents;
