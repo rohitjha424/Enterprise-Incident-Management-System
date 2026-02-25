@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.enterprise.incident.incident_management.dto.AuthRequest;
 import com.enterprise.incident.incident_management.dto.RegisterRequest;
-import com.enterprise.incident.incident_management.repository.UserRepository;
 import com.enterprise.incident.incident_management.security.JwtUtil;
+import com.enterprise.incident.incident_management.service.UserService;
 import com.enterprise.incident.incident_management.entity.User;
 
 
@@ -21,16 +21,16 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     public AuthController(
             AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil,UserRepository userRepository,
+            JwtUtil jwtUtil, UserService userService,
             PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
 
     }
@@ -52,7 +52,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userService.getUserByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity
                     .badRequest()
                     .body("Email already exists");
@@ -61,11 +61,9 @@ public class AuthController {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-
-        // 🔐 Encode password
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        userRepository.save(user);
+        userService.saveUser(user);
 
         return ResponseEntity.ok("User registered successfully");
     }
