@@ -12,6 +12,8 @@ import com.enterprise.incident.incident_management.dto.AuthRequest;
 import com.enterprise.incident.incident_management.dto.RegisterRequest;
 import com.enterprise.incident.incident_management.repository.UserRepository;
 import com.enterprise.incident.incident_management.security.JwtUtil;
+import com.enterprise.incident.incident_management.entity.User;
+
 
 @RestController
 @RequestMapping("/api/auth")
