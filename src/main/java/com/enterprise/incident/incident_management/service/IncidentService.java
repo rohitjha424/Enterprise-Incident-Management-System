@@ -5,34 +5,50 @@ import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
 import com.enterprise.incident.incident_management.entity.Incident;
 import com.enterprise.incident.incident_management.entity.IncidentPriority;
 import com.enterprise.incident.incident_management.entity.IncidentStatus;
+import com.enterprise.incident.incident_management.entity.User;
 import com.enterprise.incident.incident_management.exception.ResourceNotFoundException;
 import com.enterprise.incident.incident_management.repository.IncidentRepository;
+import com.enterprise.incident.incident_management.repository.UserRepository;
+
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
+    private final UserRepository userRepository;
 
-    public IncidentService(IncidentRepository incidentRepository) {
+    public IncidentService(IncidentRepository incidentRepository,
+            UserRepository userRepository) {
         this.incidentRepository = incidentRepository;
+        this.userRepository = userRepository;
     }
 
     // CREATE
     public IncidentResponseDTO createIncident(IncidentRequestDTO dto) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Incident incident = new Incident();
         incident.setTitle(dto.getTitle());
         incident.setDescription(dto.getDescription());
         incident.setStatus(dto.getStatus());
         incident.setPriority(dto.getPriority());
+        incident.setReportedBy(currentUser);   // 🔥 IMPORTANT
 
         Incident saved = incidentRepository.save(incident);
 
@@ -45,9 +61,23 @@ public class IncidentService {
             IncidentPriority priority,
             Pageable pageable) {
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Specification<Incident> spec = (root, query, cb) -> {
 
             Predicate predicate = cb.conjunction();
+
+            //ROLE LOGIC
+            if (!currentUser.getRole().equals("ADMIN")) {
+                predicate = cb.and(predicate,
+                        cb.equal(root.get("reportedBy"), currentUser));
+            }
 
             if (status != null) {
                 predicate = cb.and(predicate,
