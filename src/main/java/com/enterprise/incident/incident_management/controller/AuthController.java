@@ -14,7 +14,6 @@ import com.enterprise.incident.incident_management.security.JwtUtil;
 import com.enterprise.incident.incident_management.service.UserService;
 import com.enterprise.incident.incident_management.entity.User;
 
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -48,7 +47,7 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of("token", token));
     }
-    
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
