@@ -16,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import jakarta.persistence.criteria.Predicate;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class IncidentService {
     }
 
     // CREATE
+    @CacheEvict(value = "incidents", allEntries = true)
     public IncidentResponseDTO createIncident(IncidentRequestDTO dto) {
 
         Authentication authentication =
@@ -68,6 +72,7 @@ public class IncidentService {
     }
 
     // GET ALL
+    @Cacheable(value = "incidents")
     public Page<IncidentResponseDTO> getAllIncidents(
             IncidentStatus status,
             IncidentPriority priority,
