@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
 import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
+import com.enterprise.incident.incident_management.dto.PagedResponse;
 import com.enterprise.incident.incident_management.entity.IncidentPriority;
 import com.enterprise.incident.incident_management.entity.IncidentStatus;
 import com.enterprise.incident.incident_management.service.IncidentService;
@@ -40,7 +41,7 @@ public class IncidentController {
 
     // GET ALL
     @GetMapping
-    public ResponseEntity<Page<IncidentResponseDTO>> getAllIncidents(
+    public ResponseEntity<PagedResponse<IncidentResponseDTO>> getAllIncidents(
             @RequestParam(required = false) IncidentStatus status,
             @RequestParam(required = false) IncidentPriority priority,
             @PageableDefault(size = 5, sort = "createdAt") Pageable pageable) {
