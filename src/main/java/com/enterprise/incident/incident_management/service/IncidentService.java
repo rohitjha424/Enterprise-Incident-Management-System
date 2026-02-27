@@ -2,6 +2,7 @@ package com.enterprise.incident.incident_management.service;
 
 import com.enterprise.incident.incident_management.dto.IncidentRequestDTO;
 import com.enterprise.incident.incident_management.dto.IncidentResponseDTO;
+import com.enterprise.incident.incident_management.dto.PagedResponse;
 import com.enterprise.incident.incident_management.entity.Incident;
 import com.enterprise.incident.incident_management.entity.IncidentPriority;
 import com.enterprise.incident.incident_management.entity.IncidentStatus;
@@ -55,7 +56,7 @@ public class IncidentService {
         incident.setDescription(dto.getDescription());
         incident.setStatus(dto.getStatus());
         incident.setPriority(dto.getPriority());
-        incident.setReportedBy(currentUser);   // 🔥 IMPORTANT
+        incident.setReportedBy(currentUser);  
 
         Incident saved = incidentRepository.save(incident);
         
@@ -72,46 +73,58 @@ public class IncidentService {
     }
 
     // GET ALL
-    @Cacheable(value = "incidents")
-    public Page<IncidentResponseDTO> getAllIncidents(
-            IncidentStatus status,
-            IncidentPriority priority,
-            Pageable pageable) {
+    @Cacheable(
+    	    value = "incidents",
+    	    key = "#status + '-' + #priority + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().name"
+    	)
+    	public PagedResponse<IncidentResponseDTO> getAllIncidents(
+    	        IncidentStatus status,
+    	        IncidentPriority priority,
+    	        Pageable pageable) {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+    	    Authentication authentication =
+    	            SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName();
+    	    String email = authentication.getName();
 
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    	    User currentUser = userRepository.findByEmail(email)
+    	            .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Specification<Incident> spec = (root, query, cb) -> {
+    	    Specification<Incident> spec = (root, query, cb) -> {
 
-            Predicate predicate = cb.conjunction();
+    	        Predicate predicate = cb.conjunction();
 
-            //ROLE LOGIC
-            if (!currentUser.getRole().equals("ADMIN")) {
-                predicate = cb.and(predicate,
-                        cb.equal(root.get("reportedBy"), currentUser));
-            }
+    	        // ROLE LOGIC
+    	        if (!currentUser.getRole().equals("ADMIN")) {
+    	            predicate = cb.and(predicate,
+    	                    cb.equal(root.get("reportedBy"), currentUser));
+    	        }
 
-            if (status != null) {
-                predicate = cb.and(predicate,
-                        cb.equal(root.get("status"), status));
-            }
+    	        if (status != null) {
+    	            predicate = cb.and(predicate,
+    	                    cb.equal(root.get("status"), status));
+    	        }
 
-            if (priority != null) {
-                predicate = cb.and(predicate,
-                        cb.equal(root.get("priority"), priority));
-            }
+    	        if (priority != null) {
+    	            predicate = cb.and(predicate,
+    	                    cb.equal(root.get("priority"), priority));
+    	        }
 
-            return predicate;
-        };
+    	        return predicate;
+    	    };
 
-        return incidentRepository.findAll(spec, pageable)
-                .map(this::mapToResponseDTO);
-    }
+    	    Page<Incident> incidentPage = incidentRepository.findAll(spec, pageable);
+
+    	    Page<IncidentResponseDTO> dtoPage = incidentPage.map(this::mapToResponseDTO);
+
+    	    return new PagedResponse<>(
+    	            dtoPage.getContent(),
+    	            dtoPage.getNumber(),
+    	            dtoPage.getSize(),
+    	            dtoPage.getTotalElements(),
+    	            dtoPage.getTotalPages()
+    	    );
+    	}
 
     // GET BY ID
     public IncidentResponseDTO getIncidentById(Long id) {
