@@ -10,11 +10,11 @@ public class IncidentCreatedEvent {
     private String title;
     private String priority;
     private String reportedBy;
-    private LocalDateTime createdAt;
+    private String createdAt;
     
     
     
-	public IncidentCreatedEvent(Long id, String title, String priority, String reportedBy, LocalDateTime createdAt) {
+	public IncidentCreatedEvent(Long id, String title, String priority, String reportedBy, String createdAt) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -22,15 +22,13 @@ public class IncidentCreatedEvent {
 		this.reportedBy = reportedBy;
 		this.createdAt = createdAt;
 	}
-	
-	
+
+
 	public IncidentCreatedEvent() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-
 
 	public Long getId() {
 		return id;
@@ -56,10 +54,10 @@ public class IncidentCreatedEvent {
 	public void setReportedBy(String reportedBy) {
 		this.reportedBy = reportedBy;
 	}
-	public LocalDateTime getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
 
@@ -69,5 +67,7 @@ public class IncidentCreatedEvent {
 		return "IncidentCreatedEvent [id=" + id + ", title=" + title + ", priority=" + priority + ", reportedBy="
 				+ reportedBy + ", createdAt=" + createdAt + "]";
 	}
-
+	
+	
+	
 }

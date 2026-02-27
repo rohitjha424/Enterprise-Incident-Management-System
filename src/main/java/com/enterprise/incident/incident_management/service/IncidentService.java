@@ -60,7 +60,7 @@ public class IncidentService {
         event.setTitle(saved.getTitle());
         event.setPriority(saved.getPriority().name());
         event.setReportedBy(currentUser.getEmail());
-        event.setCreatedAt(saved.getCreatedAt());
+        event.setCreatedAt(saved.getCreatedAt().toString());
 
         incidentEventProducer.sendIncidentCreatedEvent(event);
 
