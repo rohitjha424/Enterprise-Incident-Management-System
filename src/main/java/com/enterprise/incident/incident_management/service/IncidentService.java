@@ -7,6 +7,7 @@ import com.enterprise.incident.incident_management.entity.IncidentPriority;
 import com.enterprise.incident.incident_management.entity.IncidentStatus;
 import com.enterprise.incident.incident_management.entity.User;
 import com.enterprise.incident.incident_management.exception.ResourceNotFoundException;
+import com.enterprise.incident.incident_management.kafka.IncidentEventProducer;
 import com.enterprise.incident.incident_management.repository.IncidentRepository;
 import com.enterprise.incident.incident_management.repository.UserRepository;
 
@@ -18,18 +19,20 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import com.enterprise.incident.incident_management.event.IncidentCreatedEvent;
 
 @Service
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
     private final UserRepository userRepository;
+    private final IncidentEventProducer incidentEventProducer;
 
     public IncidentService(IncidentRepository incidentRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, IncidentEventProducer incidentEventProducer ) {
         this.incidentRepository = incidentRepository;
         this.userRepository = userRepository;
+        this.incidentEventProducer = incidentEventProducer;
     }
 
     // CREATE
@@ -51,6 +54,15 @@ public class IncidentService {
         incident.setReportedBy(currentUser);   // 🔥 IMPORTANT
 
         Incident saved = incidentRepository.save(incident);
+        
+        IncidentCreatedEvent event = new IncidentCreatedEvent();
+        event.setId(saved.getId());
+        event.setTitle(saved.getTitle());
+        event.setPriority(saved.getPriority().name());
+        event.setReportedBy(currentUser.getEmail());
+        event.setCreatedAt(saved.getCreatedAt());
+
+        incidentEventProducer.sendIncidentCreatedEvent(event);
 
         return mapToResponseDTO(saved);
     }
